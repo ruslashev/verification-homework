@@ -1,6 +1,9 @@
 /*@ requires n >= 0;
     requires \valid(arr + (0 .. n - 1));
     assigns \nothing;
+
+    ensures \forall integer i, integer j;
+        0 <= i < j < n ==> arr[i] <= arr[j];
 */
 static void cycle_lr(int *arr, int n)
 {
