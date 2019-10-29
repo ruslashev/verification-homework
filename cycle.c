@@ -57,15 +57,14 @@ static void cycle_lr(int *arr, int n)
             continue;
         }
 
-        /*@ ghost WhBegOut:; */
         /*@ loop invariant lo < idx;
+            loop invariant \forall integer i; lo <= i < idx ==> arr[i] == x;
             loop variant idx;
          */
         while (x == arr[idx]) {
-            /* assert arr[idx] == arr[\at(idx,WhBegOut)]; */
+            /*@ assert arr[idx] == arr[idx - 1]; */
             ++idx;
         }
-        /*@ assert \forall integer i; lo <= i < idx ==> arr[lo] == arr[i]; */
 
         if (idx != lo) {
             swap(tmp, x, arr[idx]);
