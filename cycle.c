@@ -13,6 +13,17 @@
     predicate sorted{L}(int *a, integer n) = sorted{L}(a, 0, n - 1);
 */
 
+/*@ axiomatic NumLess {
+      logic int num_less{L}(int *a, integer l, integer h, integer x);
+      axiom num_less_invalid{L}:
+        \forall int* a, integer l, h, x;
+          0 <= l && h <= l ==> num_less(a, l, h, x) == 0;
+      axiom num_less_next{L}:
+        \forall int *a, integer l, h, x;
+          0 <= l <= h ==> num_less(a, l, h, x) == num_less(a, l, h - 1, x) + (a[h - 1] < x ? 1 : 0);
+    }
+@*/
+
 /*@ requires 0 < n < INT_MAX;
     requires \valid(arr + (0 .. n - 1));
     assigns arr[0 .. n - 1];
@@ -32,14 +43,12 @@ static void cycle_lr(int *arr, int n)
         idx = lo;
 
         /*@ loop invariant lo < i <= n;
-            loop invariant idx == lo + num_less_than
-            loop invariant idx == lo + num_less_than;
-            loop invariant lo <= idx <= lo + num_less_than;
+            loop invariant idx == lo + num_less(arr, lo + 1, i, x);
+            loop invariant 0 <= idx - lo <= i;
             loop assigns idx;
             loop variant i;
          */
         for (i = lo + 1; i < n; ++i)
-            /*@ ghost if (arr[i] < x) ++num_less_than; */
             if (arr[i] < x)
                 ++idx;
 
@@ -71,15 +80,13 @@ static void cycle_lr(int *arr, int n)
         while (idx != lo) {
             idx = lo;
 
-            /*@ ghost int num_less_than_c = 0; */
             /*@ loop invariant lo < i <= n;
-                loop invariant lo <= idx;
-                loop invariant idx == lo + num_less_than_c;
+                loop invariant idx == lo + num_less(arr, lo + 1, i, x);
+                loop invariant 0 <= idx - lo <= i;
                 loop assigns idx;
                 loop variant i;
              */
             for (i = lo + 1; i < n; ++i)
-                /*@ ghost if (arr[i] < x) ++num_less_than_c; */
                 if (arr[i] < x)
                     ++idx;
 
