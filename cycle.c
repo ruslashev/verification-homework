@@ -52,10 +52,14 @@ static void cycle_lr(int *arr, int n)
             if (arr[i] < x)
                 ++idx;
 
+        /*@ assert idx >= lo; */
+
         if (idx == lo) {
             /*@ assert sorted(arr, 0, idx); */
             continue;
         }
+
+        /*@ assert idx > lo; */
 
         /*@ loop invariant lo < idx;
             loop invariant \forall integer i; lo <= i < idx ==> arr[i] == x;
@@ -66,14 +70,17 @@ static void cycle_lr(int *arr, int n)
             ++idx;
         }
 
+        /*@ assert idx > lo; */
+
         if (idx != lo) {
             swap(tmp, x, arr[idx]);
             /*@ assert sorted(arr, idx, idx); */
         }
 
-        /*@ ghost int old_idx = idx; */
-        /*@ loop invariant lo <= idx < n;
-            loop assigns idx, tmp, arr[idx], x;
+        /*@ assert idx > lo; */
+
+        /*@ loop invariant lo < idx;
+            loop assigns idx, i, tmp, arr[lo .. n - 2], x;
             loop variant idx;
           */
         while (idx != lo) {
@@ -89,10 +96,19 @@ static void cycle_lr(int *arr, int n)
                 if (arr[i] < x)
                     ++idx;
 
-            /*@ loop variant idx;
-             */
-            while (x == arr[idx])
+            /*@ assert idx >= lo; */
+
+            /*@ loop invariant lo <= idx;
+                loop invariant \forall integer i; lo <= i <= idx ==> arr[i] == x;
+                loop variant idx;
+              */
+            while (x == arr[idx]) {
+                /* TODO work on this vvv */
+                /*@ assert arr[idx] == arr[idx - 1]; */
                 ++idx;
+            }
+
+            /*@ assert idx >= lo; */
 
             if (x != arr[idx]) {
                 swap(tmp, x, arr[idx]);
