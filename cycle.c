@@ -72,7 +72,11 @@ static void cycle_lr(int *arr, int n)
 
         /*@ assert idx > lo; */
 
+        /*@ ghost int old_cycle_idx = lo; */
+
         if (idx != lo) {
+            /*@ assert arr[idx] < arr[old_cycle_idx]; */
+            /*@ ghost old_cycle_idx = idx; */
             swap(tmp, x, arr[idx]);
             /*@ assert sorted(arr, idx, idx); */
         }
@@ -110,6 +114,8 @@ static void cycle_lr(int *arr, int n)
             /*@ assert idx >= lo; */
 
             if (x != arr[idx]) {
+                /*@ assert idx != lo ==> arr[idx] < arr[old_cycle_idx]; */
+                /*@ ghost old_cycle_idx = idx; */
                 swap(tmp, x, arr[idx]);
                 /*@ assert sorted(arr, idx, idx); */
             }
