@@ -33,8 +33,8 @@ static void cycle_lr(int *arr, int n)
 
     /*@ loop invariant 0 <= lo < n;
         loop invariant sorted(arr, 0, lo);
-        loop assigns i, tmp, x, idx, arr[0 .. n - 2];
-        loop variant lo;
+        loop assigns i, tmp, x, idx, arr[0 .. n - 2], lo;
+        loop variant n - 1 - lo;
      */
     for (lo = 0; lo < n - 1; ++lo) {
         x = arr[lo];
@@ -42,7 +42,8 @@ static void cycle_lr(int *arr, int n)
 
         /*@ loop invariant lo < i <= n;
             loop invariant idx == lo + num_less(arr, lo + 1, i, x);
-            loop invariant 0 <= idx - lo <= i;
+            loop invariant lo <= idx <= lo + i;
+            loop invariant idx <= i <= n;
             loop assigns idx;
             loop variant i;
          */
@@ -50,23 +51,24 @@ static void cycle_lr(int *arr, int n)
             if (arr[i] < x)
                 ++idx;
 
-        /*@ assert idx >= lo; */
+        /*@ assert lo <= idx <= n; */
 
         if (idx == lo) {
-            /*@ assert sorted(arr, 0, idx); */
+            /*@ assert sorted(arr, 0, lo); */
+            /*@ assert \forall integer j; 0 <= j < lo ==> arr[j] <= arr[idx]; */
+            /* assert \forall integer j; lo < j < n - 1 ==> arr[j] >= arr[idx]; */
             continue;
         }
 
         /*@ assert idx > lo; */
 
+        /*@ ghost int old_idx = idx; */
         /*@ loop invariant lo < idx;
-            loop invariant \forall integer i; lo <= i < idx ==> arr[i] == x;
+            loop invariant \forall integer j; old_idx <= j < idx ==> arr[j] == x;
             loop variant idx;
          */
-        while (x == arr[idx]) {
-            /*@ assert arr[idx] == arr[idx - 1]; */
+        while (x == arr[idx])
             ++idx;
-        }
 
         /*@ assert idx > lo; */
 
@@ -77,8 +79,8 @@ static void cycle_lr(int *arr, int n)
 
         /*@ assert idx > lo; */
 
-        /*@ loop invariant lo < idx;
-            loop assigns idx, i, tmp, arr[lo .. n - 2], x;
+        /*@ loop invariant lo <= idx;
+            loop assigns i, tmp, arr[lo .. n - 2], x;
             loop variant idx;
           */
         while (idx != lo) {
@@ -94,7 +96,7 @@ static void cycle_lr(int *arr, int n)
                 if (arr[i] < x)
                     ++idx;
 
-            /*@ assert idx >= lo; */
+            /*@ assert lo <= idx <= lo + n; */
 
             /*@ loop invariant lo <= idx;
                 loop invariant \forall integer i; lo <= i <= idx ==> arr[i] == x;
