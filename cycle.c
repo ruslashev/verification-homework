@@ -9,8 +9,6 @@
 
 /*@ predicate sorted{L}(int *arr, integer l, integer h) =
       \forall integer i, j; l <= i <= j <= h ==> arr[i] <= arr[j];
-
-    predicate sorted{L}(int *a, integer n) = sorted{L}(a, 0, n - 1);
 */
 
 /*@ axiomatic NumLess {
@@ -27,7 +25,7 @@
 /*@ requires 0 < n < INT_MAX;
     requires \valid(arr + (0 .. n - 1));
     assigns arr[0 .. n - 1];
-    ensures sorted(arr, n);
+    ensures sorted(arr, 0, n - 1);
 */
 static void cycle_lr(int *arr, int n)
 {
