@@ -49,7 +49,6 @@ static void cycle_lr(int *arr, int n)
             loop invariant iterations == i - lo - 1;
             loop invariant iterations <= n - lo - 1;
             loop invariant idx <= lo + n - lo - 1;
-            loop invariant idx <= n - 1;
             loop invariant idx < n;
             loop assigns i, idx;
             loop variant n - (lo + 1);
@@ -68,7 +67,7 @@ static void cycle_lr(int *arr, int n)
             continue;
         }
 
-        /*@ assert idx > lo; */
+        /*@ assert lo < idx < n; */
 
         /*@ ghost int old_idx = idx; */
         /*@ loop invariant lo < idx;
@@ -106,7 +105,6 @@ static void cycle_lr(int *arr, int n)
                 loop invariant iterations == i - lo - 1;
                 loop invariant iterations <= n - lo - 1;
                 loop invariant idx <= lo + n - lo - 1;
-                loop invariant idx <= n - 1;
                 loop invariant idx < n;
                 loop assigns idx;
                 loop variant i;
