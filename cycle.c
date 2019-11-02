@@ -19,6 +19,9 @@
       axiom num_less_next{L}:
         \forall int *a, integer l, h, x;
           0 <= l <= h ==> num_less(a, l, h, x) == num_less(a, l, h - 1, x) + (a[h - 1] < x ? 1 : 0);
+      axiom num_less_range{L}:
+        \forall int *a, integer l, h, x;
+          num_less(a, l, h, x) == h - l ==> \forall integer j; l <= j < h ==> a[j] < x;
     }
 @*/
 
@@ -72,6 +75,12 @@ static void cycle_lr(int *arr, int n)
         /*@ ghost int old_idx = idx; */
         /*@ loop invariant lo < idx;
             loop invariant \forall integer j; old_idx <= j < idx ==> arr[j] == x;
+            loop invariant idx == n - 1
+              ==> n - 1 - lo == num_less(arr, lo + 1, n, x)
+              ==> \forall integer j; lo + 1 <= j < n
+              ==> arr[j] < x
+              ==> x != arr[idx]
+              ==> idx < n;
             loop variant idx;
          */
         while (x == arr[idx])
