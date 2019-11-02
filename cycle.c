@@ -56,7 +56,6 @@ static void cycle_lr(int *arr, int n)
         if (idx == lo) {
             /*@ assert sorted(arr, 0, lo); */
             /*@ assert \forall integer j; 0 <= j < lo ==> arr[j] <= arr[idx]; */
-            /* assert \forall integer j; lo < j < n - 1 ==> arr[j] >= arr[idx]; */
             continue;
         }
 
@@ -75,7 +74,6 @@ static void cycle_lr(int *arr, int n)
         /*@ ghost int old_cycle_idx = lo; */
 
         if (idx != lo) {
-            /*@ assert arr[idx] < arr[old_cycle_idx]; */
             /*@ ghost old_cycle_idx = idx; */
             swap(tmp, x, arr[idx]);
             /*@ assert sorted(arr, idx, idx); */
