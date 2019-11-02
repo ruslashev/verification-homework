@@ -40,18 +40,27 @@ static void cycle_lr(int *arr, int n)
         x = arr[lo];
         idx = lo;
 
+        /*@ ghost int iterations = 0; */
         /*@ loop invariant lo < i <= n;
             loop invariant idx == lo + num_less(arr, lo + 1, i, x);
             loop invariant lo <= idx <= lo + i;
-            loop invariant idx <= i <= n;
-            loop assigns idx;
-            loop variant i;
+            loop invariant lo <= idx <= i <= n;
+            loop invariant idx <= lo + iterations;
+            loop invariant iterations == i - lo - 1;
+            loop invariant iterations <= n - lo - 1;
+            loop invariant idx <= lo + n - lo - 1;
+            loop invariant idx <= n - 1;
+            loop invariant idx < n;
+            loop assigns i, idx;
+            loop variant n - (lo + 1);
          */
-        for (i = lo + 1; i < n; ++i)
+        for (i = lo + 1; i < n; ++i) {
+            /*@ ghost ++iterations; */
             if (arr[i] < x)
                 ++idx;
+        }
 
-        /*@ assert lo <= idx <= n; */
+        /*@ assert lo <= idx < n; */
 
         if (idx == lo) {
             /*@ assert sorted(arr, 0, lo); */
